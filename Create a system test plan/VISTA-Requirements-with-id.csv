@@ -2,9 +2,7 @@ Issue ID,Issue Type,Summary,Description,Component
 01,Requirement,IP alarm reporting and uploading/downloading capability,"IP alarm reporting and uploading/downloading capability for Internet and Intranet use via iGSMV4G, 7845i-ENT, GSMV4G or GSMX4G.",Features/System Functions
 02,Requirement,Graphic touchscreen keypad support,Supports four graphic touchscreen keypads.,Features/System Functions
 03,Requirement,Zone-free wireless key programming,Wireless keys can be programmed without using zones.,Features/System Functions
-04,Requirement,Standard on-board hardwired zones,Eight on-board hardwired zones standard (15 when Zone Doubling feature is used).,Features/System Functions
-05,Requirement,Hardwire zone expansion capability,40 hardwire expansion zones.,Features/System Functions
-06,Requirement,Wireless zone expansion capability,40 wireless expansion zones.,Features/System Functions
+04,Requirement,Standard on-board hardwired zones,Eight on-board hardwired zones standard (15 when Zone Doubling feature is used). Hardwire zone expansion capability for 40 hardwire expansion zones and 40 wireless expansion zones.,Features/System Functions
 07,Requirement,Low current on-board trigger outputs,Two low current on-board trigger outputs.,Features/System Functions
 08,Requirement,Keypad event log with timestamp,100 Event Log viewable at system keypads with time/date stamp.,Features/System Functions
 09,Requirement,Partition-assignable user codes,48 system user codes assignable to either partition.,Features/System Functions
@@ -15,9 +13,7 @@ Issue ID,Issue Type,Summary,Description,Component
 14,Requirement,Smoke detector support with maintenance signal,Supports four-wire and up to 16 two-wire smokes. Works with Sentrol CleanMe™ maintenance signal.,Features/System Functions
 15,Requirement,State-dependent output device automation,"Multiple actions on output devices depending on system state: turns lights off when system arms, turns the same light on when system disarms, flashes same lights when system is in alarm.",Features/System Functions
 16,Requirement,Built-in phone line cut monitoring,"Built-in phone line cut monitor with programmable delay and annunciation options (display on system keypads, trigger local sounders, trigger system bell).",Features/System Functions
-17,Requirement,Exit countdown keypad display,Viewable on system keypads: Exit countdown.,Valuable End-User Features
-18,Requirement,Time and date keypad display,Viewable on system keypads: Time and date display.,Valuable End-User Features
-19,Requirement,Event log keypad view,Viewable on system keypads: Event log.,Valuable End-User Features
+17,Requirement,Exit countdown keypad display,"Viewable on system keypads: Exit countdown, Time and date, Event log.",Valuable End-User Features
 20,Requirement,Auto keypad backlighting on entry,Auto keypad backlighting on entry.,Valuable End-User Features
 21,Requirement,Key switch arming support,Key switch arming capability.,Valuable End-User Features
 22,Requirement,Macro buttons and single-button arming,Programmable macro buttons and single-button arming.,Valuable End-User Features

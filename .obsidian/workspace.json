@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Create a system test plan/Create a system test plan.md",
+                "file": "TODO.Reponame.Readme.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Create a system test plan"
+              "title": "TODO.Reponame.Readme"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Create a system test plan/Create a system test plan.md",
+                "file": "TODO.Reponame.Readme.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Create a system test plan/Create a system test plan.md",
+                "file": "TODO.Reponame.Readme.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Create a system test plan/Create a system test plan.md",
+                "file": "TODO.Reponame.Readme.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -190,10 +190,12 @@
   },
   "active": "4d87732043587397",
   "lastOpenFiles": [
+    "Create a system test plan/Create a system test plan.md",
+    "Pasted image 20260921205302.png",
+    "Pasted image 20260921202501.png",
     "TODO.Reponame.Readme.md",
     "Create a system test plan.md",
     "Create a system test plan/VISTA-Requirements-with-id.csv",
-    "Create a system test plan/Create a system test plan.md",
     "Create a system test plan",
     "New folder",
     "VISTA-Requirements-with-id.csv"
