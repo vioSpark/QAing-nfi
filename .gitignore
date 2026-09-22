@@ -1,1 +1,9 @@
 .obsidian/
+
+# Generated verification output
+test_results*.txt
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
