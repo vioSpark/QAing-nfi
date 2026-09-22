@@ -49,8 +49,7 @@ Potential errors:
 ### Functions
 There shall be an inputFileReader and an outputFileReader - both functions for now, as I don't see an encapsulation reason to make it a class.
 
-There shall be a testResultfileGenerator, function for now, again no encapsulation reason.
-
+There shall be a testResultfileGenerator, function for now, again the reason is that there's no need for encapsulation.
 
 ## Approach
 
@@ -68,5 +67,42 @@ We shall review code line-by-line level (hence the size constraint for AI)
 *Benchmarking:
 Time spent with delegating to AI: 2 hours
 Tokens used: 191.6k
-*Could be better, but I forgot to spec the folder structure and that took a bit to clean up*
+*Could be better, but I forgot to spec the folder structure and that took a bit (~20 minutes) to clean up properly*
 
+## How to run
+
+The answer to the initial question of working with a pair of input and output files, run from this folder:
+```
+python src/main.py
+```
+
+This will run the initial input-output file pair (default values). There are options to customize the file to be run: 
+ * `python src/main.py --input-file my_input.txt --output-file my_output.txt`
+With two more optional flags: 
+- `--results-file PATH` (default `test_results.txt`), where to write the output file
+- `--tolerance FLOAT` accuracy margin in coordinate units (default `0.0`)
+
+Exit code is `0` on PASS and `1` on FAIL, so status can be read via the calling shell, and plugging it  into a testing pipelines is easy.
+
+Failure and warning details are printed to the console.
+
+*As an example to run it against other files, one can use:*
+```
+cd "REPO_ROOT\Create automated test\"
+python src/main.py --input-file \test_files\system_input_file_testing_the_test.txt --output-file .\test_files\system_output_file_testing_the_test.txt
+```
+
+
+## Testing the domain objects
+
+There's a small test-suite bundled which verifies that the domain objects 'behave'. That can be ran using 
+```
+python -m pytest
+```
+
+## Improvement opportunities
+
+* Add docker for demonstrating how vertical scalability can be achieved for test automation.
+* Putting the solution into a testing framework would look nice. Didn't want to gambit on favourites, and the assignment didn't specify one, so I left it as an open point. 
+	* My advice would be to reimplement the test in robot framework, as the human-readable reports are nice to have done by the scaffolding. 
+	* On that note this solution could be integrated into a broader CI/CD pipeline. Would take quite some elbow grease to build up an MVP from scratch, so I didn't explore that direction here.

@@ -102,8 +102,7 @@ def main(input_file: str, output_file: str, results_file: str = "test_results.tx
 
 if __name__ == "__main__":
     _REPO_ROOT = Path(__file__).resolve().parents[2]  # Create_automated_test/src/main.py -> repo root
-    _SAMPLE_DIR = (_REPO_ROOT / "Nearfield Instruments Assignment_Software_Test_Engineer"
-                   / "Assignment_QA_Engineer" / "Assignment_QA_Engineer")
-    _DEFAULT_INPUT = _SAMPLE_DIR / "system_input_file.1630412935.txt"
-    _DEFAULT_OUTPUT = _SAMPLE_DIR / "system_ouput_file.1630412935.txt"
+    _TEST_FILES_DIR = (_REPO_ROOT / "Create automated test" / "test_files")
+    _DEFAULT_INPUT = _TEST_FILES_DIR / "system_input_file.1630412935.txt"
+    _DEFAULT_OUTPUT = _TEST_FILES_DIR / "system_ouput_file.1630412935.txt"
     sys.exit(main(_DEFAULT_INPUT, _DEFAULT_OUTPUT))

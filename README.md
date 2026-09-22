@@ -1,13 +1,10 @@
 
-# Broader Context
+This repo was created for sharing my solution to the assignment from Nearfield Instruments. 
 
-[[Liam]] have forwarded me an assignment from [[Nearfield]] over [email](https://mail.google.com/mail/u/0/#inbox/FMfcgzQhWTvgMNhQHtTvhRTXBWflxtMM).
-Main entry point is: [[Assignments_QA_Engineer.docx]]
-
-The assignment has two parts: 
+The assignment in explained in: [[Assignments_QA_Engineer.docx]], and the attached two examples file. It consists of two parts, that are mirrored in this repository: 
 * [[Create a system test plan]]
 * [[Create a test automation script for robot arm movement verification]]
-## Stack to use
+## Initial considerations
 * System test plan
 	* First thought is in Jira & Xray, but that's near impossible to share. Therefore it'll need to be constructed directly in md/csv files, something that is 'ready to import'. 
 	* Markdown files for descriptions --> Obsidian for a more WYSWYG experience.
@@ -23,3 +20,4 @@ The assignment has two parts:
 	* The only prereq here is clockify
 	* Core functionality: Obsidian & python
 	* Docker container
+
