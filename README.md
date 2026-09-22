@@ -2,7 +2,7 @@
 This repo was created for sharing my solution to the assignment from Nearfield Instruments. 
 
 The assignment in explained in: [[Assignments_QA_Engineer.docx]], and the attached two examples file. It consists of two parts, that are mirrored in this repository: 
-* [Create a system test plan](./Create%20a%20system%20test%20plan/Create%20a%20system%20test%20plan)
+* [Create a system test plan](./Create%20a%20system%20test%20plan/Create%20a%20system%20test%20plan.md)
 * [[Create a test automation script for robot arm movement verification]]
 ## Initial consideration
 * System test plan
