@@ -12,7 +12,7 @@ class WorkAreaRectangle:
         ys = sorted({c.y for c in corners})
         combos = {(c.x, c.y) for c in corners}
         if len(corners) != 4 or len(xs) != 2 or len(ys) != 2 or combos != {(x, y) for x in xs for y in ys}:
-            raise ValueError(f"Corners do not form an axis-aligned rectangle: {[str(c) for c in corners]}")
+            raise ValueError(f"The working area's corners do not form an axis-aligned rectangle: {[str(c) for c in corners]}")
         self.min_x, self.max_x = xs
         self.min_y, self.max_y = ys
         self.tolerance = tolerance

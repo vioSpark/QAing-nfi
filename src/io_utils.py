@@ -1,21 +1,38 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 from point import Point
-from result import VerificationResult
+from verification_result import VerificationResult
 from work_area_rectangle import WorkAreaRectangle
-
-_POINT_RE = re.compile(r"\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)")
 
 
 def parse_point(text: str) -> Point | None:
-    match = _POINT_RE.search(text)
-    if not match:
+    text = text.strip()
+    if not (text.startswith("(") and text.endswith(")")):
         return None
-    return Point(float(match.group(1)), float(match.group(2)))
+    parts = text[1:-1].split(",")
+    if len(parts) != 2:
+        return None
+    try:
+        return Point(float(parts[0]), float(parts[1]))
+    except ValueError:
+        return None
+
+
+def parse_points(line: str) -> list[Point]:
+    points: list[Point] = []
+    start: int | None = None
+    for i, char in enumerate(line):
+        if char == "(":
+            start = i
+        elif char == ")" and start is not None:
+            point = parse_point(line[start:i + 1])
+            if point is not None:
+                points.append(point)
+            start = None
+    return points
 
 
 def read_input_file(path: str, tolerance: float = 0.0) -> tuple[WorkAreaRectangle, list[Point]]:
@@ -32,9 +49,9 @@ def read_input_file(path: str, tolerance: float = 0.0) -> tuple[WorkAreaRectangl
         elif low == "points":
             section = "points"
         elif section == "rectangle":
-            corners.extend(Point(float(x), float(y)) for x, y in _POINT_RE.findall(line))
+            corners.extend(parse_points(line))
         elif section == "points":
-            expected.extend(Point(float(x), float(y)) for x, y in _POINT_RE.findall(line))
+            expected.extend(parse_points(line))
     if not corners:
         raise ValueError(f"No 'Rectangle' corners found in input file: {path}")
     if not expected:
@@ -58,4 +75,14 @@ def read_output_file(path: str) -> tuple[list[Point], list[str]]:
 
 
 def write_test_results(result: VerificationResult, path: str) -> None:
+    lines = ["# Expected visited points"]
+    lines += [str(p) for p in result.expected]
+    lines.append("# Actual visited points")
+    lines += [str(p) for p in result.actual]
+    lines.append("# Test result")
+    lines.append(result.result)
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_test_results_json(result: VerificationResult, path: str) -> None:
     Path(path).write_text(json.dumps(result.to_dict(), indent=2), encoding="utf-8")

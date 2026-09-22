@@ -7,15 +7,8 @@ from pathlib import Path
 
 from io_utils import read_input_file, read_output_file, write_test_results
 from point import Point
-from result import VerificationResult
+from verification_result import VerificationResult
 from work_area_rectangle import WorkAreaRectangle
-
-_ROOT = Path(__file__).resolve().parent.parent
-_SAMPLE_DIR = (_ROOT / "Nearfield Instruments Assignment_Software_Test_Engineer"
-               / "Assignment_QA_Engineer" / "Assignment_QA_Engineer")
-_DEFAULT_INPUT = _SAMPLE_DIR / "system_input_file.1630412935.txt"
-_DEFAULT_OUTPUT = _SAMPLE_DIR / "system_ouput_file.1630412935.txt"
-_DEFAULT_RESULTS = _ROOT / "test_results.txt"
 
 
 def _same_point(a: Point, b: Point, tolerance: float) -> bool:
@@ -69,38 +62,48 @@ def _finish(result: VerificationResult, results_path: str) -> int:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Verify robot-arm movement against work-area requirements.")
-    parser.add_argument("--input", default=str(_DEFAULT_INPUT))
-    parser.add_argument("--output", default=str(_DEFAULT_OUTPUT))
-    parser.add_argument("--results", default=str(_DEFAULT_RESULTS))
+    parser.add_argument("--input-file")
+    parser.add_argument("--output-file")
+    parser.add_argument("--results-file")
     parser.add_argument("--tolerance", type=float, default=0.0)
     return parser.parse_args(argv)
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(input_file: str, output_file: str, results_file: str = "test_results.txt",
+         argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    input_path = args.input_file or str(input_file)
+    output_path = args.output_file or str(output_file)
+    results_path = args.results_file or results_file
+
     try:
-        work_area, expected = read_input_file(args.input, args.tolerance)
+        work_area, expected = read_input_file(input_path, args.tolerance)
     except (OSError, ValueError) as exc:
         result = VerificationResult(expected=[], actual=[],
                                     work_area={"x": None, "y": None, "tolerance": args.tolerance},
-                                    input_file=args.input, output_file=args.output,
+                                    input_file=input_path, output_file=output_path,
                                     failures=[f"Req 1: cannot read expected points from input. {exc}"])
-        return _finish(result, args.results)
+        return _finish(result, results_path)
 
     try:
-        actual, warnings = read_output_file(args.output)
+        actual, warnings = read_output_file(output_path)
     except OSError as exc:
         result = VerificationResult(expected=expected, actual=[],
                                     work_area={"x": [work_area.min_x, work_area.max_x],
                                                "y": [work_area.min_y, work_area.max_y],
                                                "tolerance": work_area.tolerance},
-                                    input_file=args.input, output_file=args.output,
+                                    input_file=input_path, output_file=output_path,
                                     failures=[f"Req 3: cannot read actual points from output. {exc}"])
-        return _finish(result, args.results)
+        return _finish(result, results_path)
 
-    result = verify(work_area, expected, actual, warnings, args.input, args.output)
-    return _finish(result, args.results)
+    result = verify(work_area, expected, actual, warnings, input_path, output_path)
+    return _finish(result, results_path)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    _ROOT = Path(__file__).resolve().parent.parent
+    _SAMPLE_DIR = (_ROOT / "Nearfield Instruments Assignment_Software_Test_Engineer"
+                   / "Assignment_QA_Engineer" / "Assignment_QA_Engineer")
+    _DEFAULT_INPUT = _SAMPLE_DIR / "system_input_file.1630412935.txt"
+    _DEFAULT_OUTPUT = _SAMPLE_DIR / "system_ouput_file.1630412935.txt"
+    sys.exit(main(_DEFAULT_INPUT, _DEFAULT_OUTPUT))
