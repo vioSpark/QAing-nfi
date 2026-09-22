@@ -1,10 +1,12 @@
 
 This repo was created for sharing my solution to the assignment from Nearfield Instruments. 
 
-The assignment in explained in: [[Assignments_QA_Engineer.docx]], and the attached two examples file. It consists of two parts, that are mirrored in this repository: 
+The assignment in explained in: [Assignments_QA_Engineer.docx](Nearfield%20Instruments%20Assignment_Software_Test_Engineer/Assignment_QA_Engineer/Assignment_QA_Engineer/Assignments_QA_Engineer.docx), and the attached two examples file. It consists of two parts, that are mirrored in this repository: 
 * [Create a system test plan](./Create%20a%20system%20test%20plan/Create%20a%20system%20test%20plan.md)
-* [[Create a test automation script for robot arm movement verification]]
-## Initial consideration
+* [Create a test automation script for robot arm movement verification](./Create%20automated%20test/Create%20a%20test%20automation%20script%20for%20robot%20arm%20movement%20verification.md)
+
+These files contain the solution for the two parts repsectively.
+## Initial consideration before going into the details
 * System test plan
 	* First thought is in Jira & Xray, but that's near impossible to share. Therefore it'll need to be constructed directly in md/csv files, something that is 'ready to import'. 
 	* Markdown files for descriptions --> Obsidian for a more WYSWYG experience.

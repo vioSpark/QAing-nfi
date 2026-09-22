@@ -6,7 +6,7 @@ RAID log:
 * 09/21 16:50 - Decision: There are quite many features, that warrant an intermediate level of abstraction. These are going to supply the basis of our test suites (so in that case the test plan will be: execute the following test-suites)
 * 09/21 16:57 - Issue (Resolved): There are no id-s for the VISTA-20P requirements. I (MarkL) have decided that I need to have requirement id-s, so we can do traceability. No time to do fancy things with the id-s, so I'll just number them in a 01-99 style.
 	* Delegated off to AI with reminder to "The final set should be jira-importable"
-	* [[VISTA-Requirements-with-id.csv]]
+	* [VISTA-Requirements-with-id.csv](VISTA-Requirements-with-id.csv)
 		* Some id-s are unpopulated, because AI produced not fully reliable output - needed to clean that up.
 * 09/21 ?? *exact time lost - I forgot to move this decision to the RAID log, and found it later in my text*: 
   Regarding what constitutes as a smoke-test, in absence of other people setting the priorities (such as a dedicated PO), I've made the decision myself, based on the guiding principle of "up to my best knowledge, is this essential feature for an alarm-control system, or is this an enhancement over the basic premise of 'local alert when break-in'?". 
@@ -84,7 +84,8 @@ The system test case specifications are outlined below. For the sake of interpre
 		- Arrange
 			- Connect the Control panel SUT with a compatible "Internet/Intranet Communication device" (e.g. and iGSMV4G)
 			- Ensure that `Site definition` is loaded on the Control panel SUT
-			- Go through the workflow specified in the [specs](https://www.alarmgrid.com/documents/honeywell-vista-series-programming-guide)![[Pasted image 20260921202501.png]]
+			- Go through the workflow specified in the [specs](https://www.alarmgrid.com/documents/honeywell-vista-series-programming-guide)
+			  ![Pasted image 20260921202501.png](Pasted%20image%2020260921202501.png)
 		- Act 
 			- Upload the `Modified site definition` via the Compass downloading software
 		- Assert
@@ -99,7 +100,7 @@ The system test case specifications are outlined below. For the sake of interpre
 			- Cycle through arm-disarm with all 4 keypads
 		- Assert
 			- The armed led was lit up with all 4 keypads
-			  ![[Pasted image 20260921205302.png]]
+			  ![Pasted image 20260921205302.png](Pasted%20image%2020260921205302.png)
 - Wireless keys can be programmed without using zones
 	- T-04: Wireless keys without zones
 		- ==TODO: it is unclear from unclear from additionally googled specs how this can be done== (I use google for this exercise as my KMS). The problem is that based on the [specs](https://www.alarmgrid.com/documents/honeywell-vista-series-programming-guide), a wireless key's button functions as a loop, and the loops need to be bundled into zones so a zone type can be assigned to them? Very well could be that I am reading old specs / I am misunderstanding this aspect here. With that being said, here's a high level test that could make this behaviour observable, than the devs & architects can decide if this is intended or not..
@@ -159,14 +160,17 @@ All requirements is tested by relations recorded in a machine readable format be
 }
 ```
 
+## Coverage
+
+Strictly speaking we have 6 requirements covered (even though for RQ id 04 and RQ id 08 I am not happy with how well the existing tests are covering the requirements). Given that we have 22 RQs, we are at an `6 / 22 ~=` 27% coverage. That's barely enough to have a feel for the quality of the system.
 
 # Improvement opportunities
 * HIL testing: with more context I can probably champion/lead the entire HIL development. The assignment (understandably) lacks the data to do that in a grounded manner & I doubt that would be the way I could make the biggest impact at Nearfield, so let's not go there! ;)  
-* Finish the test cases. Also a bit better documentation could be given than citing the specs document as-is, documentation of why am I testing each feature the way I am testing it. I've seen the latter aspect biting when it comes to maintainability on the years long horizon, but only softly, so it's a choice about taking out tech-debt.
+* Improve the coverage: Finish the test cases. Also a bit better documentation could be given than citing the specs document as-is, documentation of why am I testing each feature the way I am testing it. I've seen the latter aspect biting when it comes to maintainability on the years long horizon, but only softly, so it's a choice about taking out tech-debt.
 	* Assuming the current quality, it would take 1 man-day to finish it up.
 		* Calculation:
 		  Writing the current set of test cases (incl. finding & understanding the additional documentation) took 2 hours (tracker says 1:56 to be exact). We've covered 5 requirements in full from 22 requirements. Extrapolating based on that, writing the full test suite would take another 7 hours. For the ease of planning, and giving a margin for context switching, 1d shall be used for planning reasons
 		  
 		  Full time it takes: `2h / (5 / 22) = 8.8h`
 		  Remaining time it takes: `8.8h - 2h = 6.8h`
-* 
+* Populate the test cases into jira (preferably using the Xray plugin): I have a nice pattern in my mind for configuring / structuring jira with Xray, so coverage reports and traceability matrices can be generated automatically. Unfortunately I don't own a licensed environment where I can replicate that and neatly show it (NDA..)

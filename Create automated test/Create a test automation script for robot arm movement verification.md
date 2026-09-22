@@ -1,7 +1,7 @@
 
-# Domain objects 
+## Domain objects 
 
-
+While reading the description I've identified multiple domain objects, that warrant their own class to mirror the already implied abstraction levels. Reusing these abstraction levels save me from the chore of writing elaborate definitions as part of the documentation of the code.
 ### Point
 (2d): (x,y)
 ### Work-area
@@ -51,18 +51,16 @@ There shall be an inputFileReader and an outputFileReader - both functions for n
 
 There shall be a testResultfileGenerator, function for now, again the reason is that there's no need for encapsulation.
 
-## Approach
+## Development Approach
 
-We dump context to AI, and verify AI code. Instruction used (after giving the repo's folder as the work-folder):
+Delegation enables me to work on other aspects more. Therefore I've dumped the context to an AI, and I've verified the AI code (inspired by the organizational pattern of the "lights-on software factory"). Instruction used (after giving access to the repo's folder as the work-folder):
 
 ```
 See the file "Robot-arm-task-rewrite-for-ai-delegation" and the file "Create a test automation script for robot arm movement verification" for context.  
 Start working your way through the context. Propose a plan & share it with me for feedback.
 ```
 
-[[Robot-arm-task-rewrite-for-ai-delegation]]
-
-We shall review code line-by-line level (hence the size constraint for AI)
+Additionally, I've enriched the task description with a bit more context: [Robot-arm-task-rewrite-for-ai-delegation](Robot-arm-task-rewrite-for-ai-delegation.md)
 
 *Benchmarking:
 Time spent with delegating to AI: 2 hours
@@ -93,14 +91,14 @@ python src/main.py --input-file \test_files\system_input_file_testing_the_test.t
 ```
 
 
-## Testing the domain objects
+### Testing of the domain objects
 
 There's a small test-suite bundled which verifies that the domain objects 'behave'. That can be ran using 
 ```
 python -m pytest
 ```
 
-## Improvement opportunities
+# Improvement opportunities
 
 * Add docker for demonstrating how vertical scalability can be achieved for test automation.
 * Putting the solution into a testing framework would look nice. Didn't want to gambit on favourites, and the assignment didn't specify one, so I left it as an open point. 
