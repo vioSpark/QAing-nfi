@@ -1,22 +1,5 @@
 
-RAID log:
-* 09/21 16:40 - Risk: There are now two set of features with the assignment linking both the pdf, then giving specs below.
-	* Decided to treat the pdf as example, and the word-doc specs as authoritative in case there's a disagreement. 
-	* 17:03 - revisited this point, implications are better understood: There are indeed differences here, mostly scope-wise the word-doc doesn't include power consumption ("electrical"), standards/compliance ("listings"), and "security dealer features" related features. This seems scoping-only, therefore I didn't amend this decision, the word doc is still authoritative.
-* 09/21 16:50 - Decision: There are quite many features, that warrant an intermediate level of abstraction. These are going to supply the basis of our test suites (so in that case the test plan will be: execute the following test-suites)
-* 09/21 16:57 - Issue (Resolved): There are no id-s for the VISTA-20P requirements. I (MarkL) have decided that I need to have requirement id-s, so we can do traceability. No time to do fancy things with the id-s, so I'll just number them in a 01-99 style.
-	* Delegated off to AI with reminder to "The final set should be jira-importable"
-	* [VISTA-Requirements-with-id.csv](VISTA-Requirements-with-id.csv)
-		* Some id-s are unpopulated, because AI produced not fully reliable output - needed to clean that up.
-* 09/21 ?? *exact time lost - I forgot to move this decision to the RAID log, and found it later in my text*: 
-  Regarding what constitutes as a smoke-test, in absence of other people setting the priorities (such as a dedicated PO), I've made the decision myself, based on the guiding principle of "up to my best knowledge, is this essential feature for an alarm-control system, or is this an enhancement over the basic premise of 'local alert when break-in'?". 
-* 09/21 17:30 - Assumption: "below system" is a bit ambiguous and left for interpretation. Since there is no-one to ask (sent q to Nearfield via Liam), I've decided that the "below system" refers to the VISTA-20P control module as a standalone - rolling off from the production line (so not integrated with anything yet) - system.
-	* btw, important that I don't have domain knowledge with alarm systems, and it shows. Decided to go for a top-down approach instead of more googling.
-* 09/21 18:30 - Assumption: there's not much context regarding what's the goal of our testing here, in what phase of product development. For that reason I've assumed that this is mid-development, when the first 10-100s of prototypes are getting created, but the design can't be fundamentally altered anymore. 
-
-
-
-
+This task consists of two parts: A high-level test plan for the control module, and on a lower level writing system test cases. This is followed by a RAID log to make assumptions explicit instead of implicit, and closed off by the list if improvement opportunities that could extend & polish up this work. 
 # HL system test plan
 
 The "below system" is the VISTA-20P control module, unintegrated with other components. 
@@ -164,6 +147,29 @@ All requirements is tested by relations recorded in a machine readable format be
 
 Strictly speaking we have 6 requirements covered (even though for RQ id 04 and RQ id 08 I am not happy with how well the existing tests are covering the requirements). Given that we have 22 RQs, we are at an `6 / 22 ~=` 27% coverage. That's barely enough to have a feel for the quality of the system.
 
+
+# RAID log
+
+There were many ambiguous points during the completion of this assignment. Normally I'd go and ask around / consult the KMS of the company, but that was not an available option here. Therefore I've decided to maintain a RAID log for this task, so we can revisit decisions in case this steers off the direction the task was aimed at.
+
+
+* 09/21 16:40 - Risk: There are now two set of features with the assignment linking both the pdf, then giving specs below.
+	* Decided to treat the pdf as example, and the word-doc specs as authoritative in case there's a disagreement. 
+	* 17:03 - revisited this point, implications are better understood: There are indeed differences here, mostly scope-wise the word-doc doesn't include power consumption ("electrical"), standards/compliance ("listings"), and "security dealer features" related features. This seems scoping-only, therefore I didn't amend this decision, the word doc is still authoritative.
+* 09/21 16:50 - Decision: There are quite many features, that warrant an intermediate level of abstraction. These are going to supply the basis of our test suites (so in that case the test plan will be: execute the following test-suites)
+* 09/21 16:57 - Issue (Resolved): There are no id-s for the VISTA-20P requirements. I (MarkL) have decided that I need to have requirement id-s, so we can do traceability. No time to do fancy things with the id-s, so I'll just number them in a 01-99 style.
+	* Delegated off to AI with reminder to "The final set should be jira-importable"
+	* [VISTA-Requirements-with-id.csv](VISTA-Requirements-with-id.csv)
+		* Some id-s are unpopulated, because AI produced not fully reliable output - needed to clean that up.
+* 09/21 ?? *exact time lost - I forgot to move this decision to the RAID log, and found it later in my text*: 
+  Regarding what constitutes as a smoke-test, in absence of other people setting the priorities (such as a dedicated PO), I've made the decision myself, based on the guiding principle of "up to my best knowledge, is this essential feature for an alarm-control system, or is this an enhancement over the basic premise of 'local alert when break-in'?". 
+* 09/21 17:30 - Assumption: "below system" is a bit ambiguous and left for interpretation. Since there is no-one to ask (sent q to Nearfield via Liam), I've decided that the "below system" refers to the VISTA-20P control module as a standalone - rolling off from the production line (so not integrated with anything yet) - system.
+	* btw, important that I don't have domain knowledge with alarm systems, and it shows. Decided to go for a top-down approach instead of more googling.
+* 09/21 18:30 - Assumption: there's not much context regarding what's the goal of our testing here, in what phase of product development. For that reason I've assumed that this is mid-development, when the first 10-100s of prototypes are getting created, but the design can't be fundamentally altered anymore. 
+
+
+
+
 # Improvement opportunities
 * HIL testing: with more context I can probably champion/lead the entire HIL development. The assignment (understandably) lacks the data to do that in a grounded manner & I doubt that would be the way I could make the biggest impact at Nearfield, so let's not go there! ;)  
 * Improve the coverage: Finish the test cases. Also a bit better documentation could be given than citing the specs document as-is, documentation of why am I testing each feature the way I am testing it. I've seen the latter aspect biting when it comes to maintainability on the years long horizon, but only softly, so it's a choice about taking out tech-debt.
@@ -174,3 +180,6 @@ Strictly speaking we have 6 requirements covered (even though for RQ id 04 and R
 		  Full time it takes: `2h / (5 / 22) = 8.8h`
 		  Remaining time it takes: `8.8h - 2h = 6.8h`
 * Populate the test cases into jira (preferably using the Xray plugin): I have a nice pattern in my mind for configuring / structuring jira with Xray, so coverage reports and traceability matrices can be generated automatically. Unfortunately I don't own a licensed environment where I can replicate that and neatly show it (NDA..)
+* General touch-up on the text quality. I haven't run dedicated grammar check over this text 
+
+

@@ -1,3 +1,4 @@
+This task calls for a bit more principled approach than straight-up writing code. Therefore firstly let's consider the domain objects to use, that'll form our intermediate abstraction level (software construction), than define our approach development. It is followed by a brief explanation on how to run the solution, and finished off by the list of improvement opportunities, given more resources could be spent on this task. 
 
 ## Domain objects 
 
@@ -104,3 +105,5 @@ python -m pytest
 * Putting the solution into a testing framework would look nice. Didn't want to gambit on favourites, and the assignment didn't specify one, so I left it as an open point. 
 	* My advice would be to reimplement the test in robot framework, as the human-readable reports are nice to have done by the scaffolding. 
 	* On that note this solution could be integrated into a broader CI/CD pipeline. Would take quite some elbow grease to build up an MVP from scratch, so I didn't explore that direction here.
+* The solution can be verified more in-depth. I didn't end up stepping line-by-line through with a debugger, as I didn't feel the need to, but depending on the mission-criticality of this piece of code, I could do that. 
+	* Due to lack of further context, I can't make a decision here if that'd be warranted (but my guess, that the robot already has the out-of-bounds->homing protection built-in, based on what I saw in the output file, so this is not that mission-critical code to step-through it) 
