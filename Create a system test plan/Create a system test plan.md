@@ -162,4 +162,11 @@ All requirements is tested by relations recorded in a machine readable format be
 
 # Improvement opportunities
 * HIL testing: with more context I can probably champion/lead the entire HIL development. The assignment (understandably) lacks the data to do that in a grounded manner & I doubt that would be the way I could make the biggest impact at Nearfield, so let's not go there! ;)  
-* Finish the test cases. Also better documentation than citing the specs, why am I testing each feature the way I am testing it. I've seen the latter aspect biting when it comes to maintainability on the years long horizon, but only softly.
+* Finish the test cases. Also a bit better documentation could be given than citing the specs document as-is, documentation of why am I testing each feature the way I am testing it. I've seen the latter aspect biting when it comes to maintainability on the years long horizon, but only softly, so it's a choice about taking out tech-debt.
+	* Assuming the current quality, it would take 1 man-day to finish it up.
+		* Calculation:
+		  Writing the current set of test cases (incl. finding & understanding the additional documentation) took 2 hours (tracker says 1:56 to be exact). We've covered 5 requirements in full from 22 requirements. Extrapolating based on that, writing the full test suite would take another 7 hours. For the ease of planning, and giving a margin for context switching, 1d shall be used for planning reasons
+		  
+		  Full time it takes: `2h / (5 / 22) = 8.8h`
+		  Remaining time it takes: `8.8h - 2h = 6.8h`
+* 

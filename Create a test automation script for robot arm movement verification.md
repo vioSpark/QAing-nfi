@@ -52,3 +52,20 @@ There shall be an inputFileReader and an outputFileReader - both functions for n
 There shall be a testResultfileGenerator, function for now, again no encapsulation reason.
 
 
+## Approach
+
+We dump context to AI, and verify AI code. Instruction used (after giving the repo's folder as the work-folder):
+
+```
+See the file "Robot-arm-task-rewrite-for-ai-delegation" and the file "Create a test automation script for robot arm movement verification" for context.  
+Start working your way through the context. Propose a plan & share it with me for feedback.
+```
+
+[[Robot-arm-task-rewrite-for-ai-delegation]]
+
+We shall review code line-by-line level (hence the size constraint for AI)
+
+*Benchmarking:
+Time spent with delegating to AI: ==1 hour (so far)==
+Tokens used: ==123.5k (so far)==*
+

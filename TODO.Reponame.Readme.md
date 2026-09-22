@@ -6,7 +6,7 @@ Main entry point is: [[Assignments_QA_Engineer.docx]]
 
 The assignment has two parts: 
 * [[Create a system test plan]]
-* [[Create a test automation script]]
+* [[Create a test automation script for robot arm movement verification]]
 ## Stack to use
 * System test plan
 	* First thought is in Jira & Xray, but that's near impossible to share. Therefore it'll need to be constructed directly in md/csv files, something that is 'ready to import'. 
