@@ -66,6 +66,7 @@ Start working your way through the context. Propose a plan & share it with me fo
 We shall review code line-by-line level (hence the size constraint for AI)
 
 *Benchmarking:
-Time spent with delegating to AI: ==1 hour (so far)==
-Tokens used: ==123.5k (so far)==*
+Time spent with delegating to AI: 2 hours
+Tokens used: 191.6k
+*Could be better, but I forgot to spec the folder structure and that took a bit to clean up*
 
