@@ -1,6 +1,7 @@
 name: Test domain objects
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:

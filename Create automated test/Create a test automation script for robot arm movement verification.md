@@ -70,6 +70,18 @@ Tokens used: 191.6k
 
 ## How to run
 
+### In GitHub Actions
+
+Dispatch the workflow manually from: https://github.com/vioSpark/QAing-nfi/actions/workflows/Run_test.yaml
+![Pasted image 20260925130027.png](Pasted%20image%2020260925130027.png)
+
+This is currently hardcoded to use the provided example input and output files (the latest from the branch the workflow is getting ran from).
+
+By opening the run details, the logs are visible, and below the test_results.txt file is saved as an artifact (for 7 days).
+
+There's a second workflow for the testing the domain objects: https://github.com/vioSpark/QAing-nfi/actions/workflows/Test_domain_objects.yaml, that automatically runs on each push, and also via a manual dispatch (in case there's need for the latter, e.g. during a framework failure).
+### Locally
+
 The answer to the initial question of working with a pair of input and output files, run from this folder:
 ```
 python src/main.py
@@ -104,7 +116,7 @@ python -m pytest
 * Add docker for demonstrating how vertical scalability can be achieved for test automation.
 * Putting the solution into a testing framework would look nice. Didn't want to gambit on favourites, and the assignment didn't specify one, so I left it as an open point. 
 	* My advice would be to reimplement the test in robot framework, as the human-readable reports are nice to have done by the scaffolding. 
-	* On that note this solution could be integrated into a broader CI/CD pipeline. Would take quite some elbow grease to build up an MVP from scratch, so I didn't explore that direction here.
+	* On that note this solution could be integrated into a broader CI/CD pipeline. Would take quite some elbow grease to build up an MVP from scratch, so only took the very first steps here with the github actions integration.
 * The solution can be verified more in-depth. I didn't end up stepping line-by-line through with a debugger, as I didn't feel the need to, but depending on the mission-criticality of this piece of code, I could do that. 
 	* Due to lack of further context, I can't make a decision here if that'd be warranted (but my guess, that the robot already has the out-of-bounds->homing protection built-in, based on what I saw in the output file, so this is not that mission-critical code to step-through it)
 * Benchmark my approach: My internal time tracking says that I've put in around 10 hours of work (for both tasks combined, including breaks) before shrink-wrapping this assignment up. That's a bit of an overrun over the intended 6-8 hours and there are clearly some loose ends in this work that'd need to tie up before I'd be comfortable calling this one of my flagship project examples. I am not exactly sure why I didn't spot this straight-up, probably I've underestimated the size of the VISTA control panel, and spent a bit too much time going a bit too deep (compared to the size of the assignment) when specifying the test cases for it.
