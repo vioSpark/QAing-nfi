@@ -26,6 +26,18 @@ Depending on the volume of the units/systems to be tested, the HIL testbench sha
 * Interface attach/detach: Brackets (e.g. 3D printed) with pre-installed cables and test-pins, for faster power & interface attach/detach (screwing in cables is especially time-consuming - which offsets quite early the time it takes to design a pin-based fixture interface)
 * *Test subassemblies before assembly (whether this is worth it is highly dependent on the quality of the subassemblies - so this is a bit more situational)*
 
+## Test case definitions
+
+Given the high likelihood that the testing work will need to be repeated, the test case definitions shall form the backbone of the documentation of the work. 
+
+Since the overall knowledge regarding the product is low in the test-team, the system test case specifications shall follow an AAA (Arrange, Act, Assert) format. This was selected over the BDD (Given, When, Then) format, because the current level of the drivers from the proposed HIL testbench capability is virtually zero, and I haven't got confirmation that I shall expect this capability to be built. This means that test-team will need to ensure that both the drivers, and the test-cases exist (former is coding work, latter is plain English). To test the system both need to exists, but the task of defining and documenting a mature mapping between the English keywords and the code functions can be avoided by selecting AAA over BDD. This is a trade-off between test-case development speed and ideal architecture.
+
+I can envision a driver layer to be handy for a development team(s) too, maybe already existing. If these drivers already exist, I'd certainly give an attempt to hook BDD-style tests into that driver-layer (if technologically feasible), as that reduces the scope of testing quite substantially, even when accounting for the additional task of the keyword-code mapping.
+
+In either case, I want to avoid the scenario, when the test-team silently absorbs the cost of developing this system interfacing capability (the drivers), as this runs the risk of this being perceived as a slow-down during testing. 
+
+(*Regarding the phrasing: I am well-aware that the team in this assignment means only me, and there's no further corporate context, but policies and guidelines shall have a more abstract, person-independent target group to be maintainable over the timeframe of quarters*)
+
 ## Test suites
 
 The defined test-suites shall act as an intermediate abstraction level between the level "does the system work? Yes-no style", and the "which exact test are failing?". There are some already well-defined abstractions in the feature description, namely:
@@ -48,7 +60,7 @@ Traceability between requirements and test suites:
 
 The system test case specifications are outlined below. For the sake of interpretability, the requirement inspiring each test case have been left there, however the source of truth shall be the traceability matrix in the section below.
 
-*For the sake of this assignment, I've written many test case approaches, to showcase that the approach is fully tailorable to the available tools, expertise & level of automation around.*
+*For the sake of this assignment, I've written various test case approaches, to showcase that the approach is fully tailorable to the available tools, expertise & level of automation around.*
 ## Test cases
 
 - 01 - IP alarm reporting and uploading/ downloading capability for Internet and Intranet use via iGSMV4G, 7845i-ENT, GSMV4G or GSMX4G
