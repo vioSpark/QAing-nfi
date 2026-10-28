@@ -1,0 +1,10 @@
+# coverage.py settings for the pytest suite in "Create automated test".
+# Run from the repository root, so the paths in coverage.xml are relative to it:
+#   python -m coverage run -m pytest "Create automated test"
+#   python -m coverage xml -o coverage.xml
+# coverage.xml then has <source>Create automated test/src</source> and file names
+# relative to that folder; source + "/" + filename is the file's path in git.
+[run]
+source = Create automated test/src
+relative_files = true
+branch = true
