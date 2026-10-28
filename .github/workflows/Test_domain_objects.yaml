@@ -2,6 +2,7 @@ name: Test domain objects
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -12,7 +13,10 @@ jobs:
         python-version: ['3.12']
 
     steps:
+    # Full history: the coverage protection policy needs origin/main and the branch's head commit.
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -50,3 +54,8 @@ jobs:
       run: |
         echo "### Coverage, Python ${{ matrix.python-version }}" >> "$GITHUB_STEP_SUMMARY"
         python -m coverage report --format=markdown >> "$GITHUB_STEP_SUMMARY"
+
+    # A branch may not have lower line coverage than main (tools/coverage_protection_policy.py).
+    - name: Coverage protection policy
+      if: ${{ github.event_name != 'push' }}
+      run: python tools/coverage_protection_policy.py
