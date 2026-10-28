@@ -1,0 +1,27 @@
+name: Coverage protection policy
+
+# A branch may not have lower line coverage than main (tools/coverage_protection_policy.py).
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  coverage-protection-policy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Full history: the policy needs origin/main and the branch's head commit.
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: python -m pip install -r "Create automated test/requirements.txt"
+
+    - name: Coverage protection policy
+      run: python tools/coverage_protection_policy.py
