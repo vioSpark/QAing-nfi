@@ -26,6 +26,8 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        # The runner image caches an older 3.15.x; check for the newest one.
+        check-latest: true
 
     - name: Identify commit pair
       id: identify
@@ -73,6 +75,8 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        # The runner image caches an older 3.15.x; check for the newest one.
+        check-latest: true
 
     - name: Install dependencies
       run: python -m pip install -r "$RUNNER_TEMP/requirements.txt"
@@ -111,6 +115,8 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        # The runner image caches an older 3.15.x; check for the newest one.
+        check-latest: true
 
     # Each artifact lands in a folder named after it: coverage-main_head/, coverage-merge/.
     - name: Download both coverage files
