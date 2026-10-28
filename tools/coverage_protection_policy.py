@@ -20,11 +20,12 @@ def main(arguments: list[str]) -> int:
     merge_coverage = line_coverage(merge_cobertura)
     print(f"{'main_head:':<35}{main_coverage:.2f}% line coverage")
     print(f"{'branch_head merged into main_head:':<35}{merge_coverage:.2f}% line coverage")
-    if merge_coverage < main_coverage:
-        print("Coverage protection policy: REJECTED, line coverage went down")
-        return 1
-    print("Coverage protection policy: passed")
-    return 0
+    # Line coverage may not decrease: equal passes.
+    if main_coverage <= merge_coverage:
+        print("Coverage protection policy: passed")
+        return 0
+    print("Coverage protection policy: REJECTED, line coverage went down")
+    return 1
 
 
 def line_coverage(cobertura_path: Path) -> float:

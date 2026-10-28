@@ -9,7 +9,7 @@ env:
   PYTHON_VERSION: '3.15'
 
 jobs:
-  identify-commit-pair:
+  identify-commits:
     runs-on: ubuntu-latest
     outputs:
       main_head: ${{ steps.identify.outputs.main_head }}
@@ -17,10 +17,10 @@ jobs:
       merge_commit: ${{ steps.identify.outputs.merge_commit }}
 
     steps:
-    # Depth 2: on a pull request this is GitHub's merge commit, and main_head is its first parent.
+    # Full history: on a workflow_dispatch the merge commit is created here, which needs the common ancestor.
     - uses: actions/checkout@v7
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
     - name: Setup Python
       uses: actions/setup-python@v7
@@ -29,13 +29,13 @@ jobs:
         # The runner image caches an older 3.15.x; check for the newest one.
         check-latest: true
 
-    - name: Identify commit pair
+    - name: Identify commits
       id: identify
-      run: python tools/identify_commit_pair.py
+      run: python tools/identify_commits.py
 
   coverage:
     name: coverage (${{ matrix.role }})
-    needs: identify-commit-pair
+    needs: identify-commits
     runs-on: ubuntu-latest
     strategy:
       # A failure on one commit must not cancel the measurement of the other.
@@ -43,33 +43,17 @@ jobs:
       matrix:
         include:
         - role: main_head
-          commit: ${{ needs.identify-commit-pair.outputs.main_head }}
-        # GitHub's merge commit on a pull request; on a workflow_dispatch branch_head, merged below.
+          commit: ${{ needs.identify-commits.outputs.main_head }}
+        # GitHub's merge commit on a pull request; on a workflow_dispatch branch_head, the merge is recreated below.
         - role: merge
-          commit: ${{ needs.identify-commit-pair.outputs.merge_commit || needs.identify-commit-pair.outputs.branch_head }}
+          commit: ${{ github.event_name == 'pull_request' && needs.identify-commits.outputs.merge_commit || needs.identify-commits.outputs.branch_head }}
 
     steps:
-    # Full history: merging needs the common ancestor.
+    # Full history: recreating the merge commit needs the common ancestor.
     - uses: actions/checkout@v7
       with:
         ref: ${{ matrix.commit }}
         fetch-depth: 0
-
-    # A workflow_dispatch has no merge commit from GitHub: make one the same way. It stays on this runner.
-    - name: Merge main_head into branch_head
-      if: ${{ matrix.role == 'merge' && needs.identify-commit-pair.outputs.merge_commit == '' }}
-      run: |
-        git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-          merge --no-ff --no-edit "${{ needs.identify-commit-pair.outputs.main_head }}" \
-          || { echo "::error::branch_head has merge conflicts with main_head; resolve them first."; exit 1; }
-
-    # Both commits are measured with branch_head's settings and dependencies: main may not have them yet.
-    - name: Coverage settings from branch_head
-      run: |
-        git fetch --quiet origin "${{ needs.identify-commit-pair.outputs.branch_head }}"
-        git show "FETCH_HEAD:.coveragerc" > "$RUNNER_TEMP/.coveragerc"
-        git show "FETCH_HEAD:Create automated test/requirements.txt" > "$RUNNER_TEMP/requirements.txt"
-        echo "COVERAGE_RCFILE=$RUNNER_TEMP/.coveragerc" >> "$GITHUB_ENV"
 
     - name: Setup Python
       uses: actions/setup-python@v7
@@ -77,6 +61,26 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
         # The runner image caches an older 3.15.x; check for the newest one.
         check-latest: true
+
+    # On a workflow_dispatch the merge commit exists only on the identify-commits runner. It is reproducible, so
+    # create it again here and check that it is the same commit.
+    - name: Recreate the merge commit
+      if: ${{ matrix.role == 'merge' && github.event_name != 'pull_request' }}
+      run: |
+        merge_commit=$(python tools/create_merge_commit.py "${{ needs.identify-commits.outputs.main_head }}" "${{ needs.identify-commits.outputs.branch_head }}")
+        if [ "$merge_commit" != "${{ needs.identify-commits.outputs.merge_commit }}" ]; then
+          echo "::error::The recreated merge commit $merge_commit differs from ${{ needs.identify-commits.outputs.merge_commit }}."
+          exit 1
+        fi
+        git checkout --quiet --detach "$merge_commit"
+
+    # Both commits are measured with branch_head's settings and dependencies: main may not have them yet.
+    - name: Coverage settings from branch_head
+      run: |
+        git fetch --quiet origin "${{ needs.identify-commits.outputs.branch_head }}"
+        git show "FETCH_HEAD:.coveragerc" > "$RUNNER_TEMP/.coveragerc"
+        git show "FETCH_HEAD:Create automated test/requirements.txt" > "$RUNNER_TEMP/requirements.txt"
+        echo "COVERAGE_RCFILE=$RUNNER_TEMP/.coveragerc" >> "$GITHUB_ENV"
 
     - name: Install dependencies
       run: python -m pip install -r "$RUNNER_TEMP/requirements.txt"
