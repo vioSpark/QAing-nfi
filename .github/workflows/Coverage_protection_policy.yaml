@@ -1,0 +1,13 @@
+name: Coverage protection policy
+
+# Placeholder. GitHub offers a manual run only for a workflow that is on the default branch; a manual run on
+# another branch then runs that branch's version. The real workflow comes with pull request #1.
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: echo "Placeholder. The coverage protection policy comes with pull request #1."
