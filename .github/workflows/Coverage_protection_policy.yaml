@@ -5,82 +5,74 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  PYTHON_VERSION: '3.15'
-
 jobs:
-  identify-commits:
+  coverage-merge:
     runs-on: ubuntu-latest
-    outputs:
-      main_head: ${{ steps.identify.outputs.main_head }}
-      branch_head: ${{ steps.identify.outputs.branch_head }}
-      merge_commit: ${{ steps.identify.outputs.merge_commit }}
 
     steps:
-    # Full history: on a workflow_dispatch the merge commit is created here, which needs the common ancestor.
+    # Full history: on a workflow_dispatch the merge below needs origin/main and the common ancestor.
     - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
+    # On a pull_request GitHub already made this merge commit, and checkout checked it out.
+    - name: Merge main into the dispatched commit
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" merge --no-ff --no-edit origin/main
+
     - name: Setup Python
       uses: actions/setup-python@v7
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        # The runner image caches an older 3.15.x; check for the newest one.
-        check-latest: true
+        python-version: '3.x'
 
-    - name: Identify commits
-      id: identify
-      run: python tools/identify_commits.py
+    - name: Install dependencies
+      run: python -m pip install -r "Create automated test/requirements.txt"
 
-  coverage:
-    name: coverage (${{ matrix.role }})
-    needs: identify-commits
+    # All tests must pass on the merge.
+    - name: Run pytest with coverage
+      id: tests
+      run: python -m coverage run -m pytest "Create automated test"
+
+    # Also when tests fail: their coverage is still worth a look.
+    - name: Write coverage.xml (Cobertura)
+      if: ${{ success() || steps.tests.outcome == 'failure' }}
+      run: python -m coverage xml -o coverage.xml
+
+    - name: Upload coverage.xml
+      if: ${{ success() || steps.tests.outcome == 'failure' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: coverage-merge
+        path: coverage.xml
+        if-no-files-found: error
+        retention-days: 7
+
+  # This job could be a matrix with coverage-merge, but the if-statements would make the CI pipeline hard to
+  # understand, which a CI pipeline should not be.
+  coverage-main_head:
     runs-on: ubuntu-latest
-    strategy:
-      # A failure on one commit must not cancel the measurement of the other.
-      fail-fast: false
-      matrix:
-        include:
-        - role: main_head
-          commit: ${{ needs.identify-commits.outputs.main_head }}
-        # GitHub's merge commit on a pull request; on a workflow_dispatch branch_head, the merge is recreated below.
-        - role: merge
-          commit: ${{ github.event_name == 'pull_request' && needs.identify-commits.outputs.merge_commit || needs.identify-commits.outputs.branch_head }}
 
     steps:
-    # Full history: recreating the merge commit needs the common ancestor.
+    # Full history: main_head is checked out below.
     - uses: actions/checkout@v7
       with:
-        ref: ${{ matrix.commit }}
         fetch-depth: 0
 
-    - name: Setup Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        # The runner image caches an older 3.15.x; check for the newest one.
-        check-latest: true
-
-    # On a workflow_dispatch the merge commit exists only on the identify-commits runner. It is reproducible, so
-    # create it again here and check that it is the same commit.
-    - name: Recreate the merge commit
-      if: ${{ matrix.role == 'merge' && github.event_name != 'pull_request' }}
+    # main_head is measured with the settings and dependencies of the commit under test: main may not have them yet.
+    - name: Coverage settings from the commit under test
       run: |
-        merge_commit=$(python tools/create_merge_commit.py "${{ needs.identify-commits.outputs.main_head }}" "${{ needs.identify-commits.outputs.branch_head }}")
-        if [ "$merge_commit" != "${{ needs.identify-commits.outputs.merge_commit }}" ]; then
-          echo "::error::The recreated merge commit $merge_commit differs from ${{ needs.identify-commits.outputs.merge_commit }}."
-          exit 1
-        fi
-        git checkout --quiet --detach "$merge_commit"
-
-    # Both commits are measured with branch_head's settings and dependencies: main may not have them yet.
-    - name: Coverage settings from branch_head
-      run: |
-        git fetch --quiet origin "${{ needs.identify-commits.outputs.branch_head }}"
-        git show "FETCH_HEAD:.coveragerc" > "$RUNNER_TEMP/.coveragerc"
-        git show "FETCH_HEAD:Create automated test/requirements.txt" > "$RUNNER_TEMP/requirements.txt"
+        cp .coveragerc "$RUNNER_TEMP/.coveragerc"
+        cp "Create automated test/requirements.txt" "$RUNNER_TEMP/requirements.txt"
         echo "COVERAGE_RCFILE=$RUNNER_TEMP/.coveragerc" >> "$GITHUB_ENV"
+
+    # The merge commit's first parent on a pull_request, the latest main on a workflow_dispatch.
+    - name: Check out main_head
+      run: git checkout --detach "${{ github.event_name == 'pull_request' && 'HEAD^1' || 'origin/main' }}"
+
+    - name: Setup Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.x'
 
     - name: Install dependencies
       run: python -m pip install -r "$RUNNER_TEMP/requirements.txt"
@@ -88,28 +80,26 @@ jobs:
     # On main_head a failing test neither stops the measurement nor turns the check red: only its coverage is used.
     - name: Run pytest with coverage
       id: tests
-      continue-on-error: ${{ matrix.role == 'main_head' }}
+      continue-on-error: true
       run: python -m coverage run -m pytest "Create automated test"
 
     - name: Warn about failing tests on main_head
-      if: ${{ matrix.role == 'main_head' && steps.tests.outcome == 'failure' }}
-      run: echo "::warning::Tests fail on main_head (${{ matrix.commit }}); its coverage is still used."
+      if: ${{ steps.tests.outcome == 'failure' }}
+      run: echo "::warning::Tests fail on main_head ($(git rev-parse --short HEAD)); its coverage is still used."
 
     - name: Write coverage.xml (Cobertura)
-      if: ${{ !cancelled() }}
       run: python -m coverage xml -o coverage.xml
 
     - name: Upload coverage.xml
-      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v7
       with:
-        name: coverage-${{ matrix.role }}
+        name: coverage-main_head
         path: coverage.xml
         if-no-files-found: error
         retention-days: 7
 
   enforce-policy:
-    needs: coverage
+    needs: [coverage-merge, coverage-main_head]
     runs-on: ubuntu-latest
 
     steps:
@@ -118,9 +108,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v7
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        # The runner image caches an older 3.15.x; check for the newest one.
-        check-latest: true
+        python-version: '3.x'
 
     # Each artifact lands in a folder named after it: coverage-main_head/, coverage-merge/.
     - name: Download both coverage files
