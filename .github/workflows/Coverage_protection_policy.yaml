@@ -47,6 +47,29 @@ jobs:
         if-no-files-found: error
         retention-days: 7
 
+    # .NET is on the runner. ReportGenerator exits 0 when it can't find a source file, so its log is checked.
+    # Its headline counts a partly covered line as covered; the policy's own figure is in enforce-policy's log.
+    - name: Line-by-line coverage report (ReportGenerator)
+      if: ${{ success() || steps.tests.outcome == 'failure' }}
+      shell: bash
+      run: |
+        dotnet tool install dotnet-reportgenerator-globaltool --version 5.5.11 --tool-path "$RUNNER_TEMP/reportgenerator"
+        "$RUNNER_TEMP/reportgenerator/reportgenerator" "-reports:coverage.xml" "-sourcedirs:$GITHUB_WORKSPACE" \
+          "-targetdir:coverage-report" "-reporttypes:Html" \
+          "-title:QAing-nfi: branch_head merged into main_head ($(git rev-parse --short HEAD))" | tee "$RUNNER_TEMP/reportgenerator.log"
+        ! grep "does not exist" "$RUNNER_TEMP/reportgenerator.log"
+
+    # Not named coverage-*: enforce-policy downloads those. The per-file pages are named ._py*.html.
+    - name: Upload the coverage report
+      if: ${{ success() || steps.tests.outcome == 'failure' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: line-by-line-coverage-report
+        path: coverage-report/
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 7
+
   # This job could be a matrix with coverage-merge, but the if-statements would make the CI pipeline hard to
   # understand, which a CI pipeline should not be.
   coverage-main_head:
