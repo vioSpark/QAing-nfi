@@ -1,1 +1,2 @@
-pytest
+pytest==9.1.1
+coverage==7.17.0

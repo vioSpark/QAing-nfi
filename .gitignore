@@ -7,3 +7,9 @@ test_results*.txt
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Coverage output
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
