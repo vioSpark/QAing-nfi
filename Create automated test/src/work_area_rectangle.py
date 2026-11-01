@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from point import Point
 
 
@@ -23,3 +25,10 @@ class WorkAreaRectangle:
         t = self.tolerance
         return (self.min_x - t <= point.x <= self.max_x + t
                 and self.min_y - t <= point.y <= self.max_y + t)
+
+    def distance_outside(self, point: Point) -> float:
+        # How far an out-of-bounds point overshot the work area, tolerance included: 0 for a point inside.
+        t = self.tolerance
+        dx = max(self.min_x - t - point.x, 0, point.x - self.max_x - t)
+        dy = max(self.min_y - t - point.y, 0, point.y - self.max_y - t)
+        return math.hypot(dx, dy)

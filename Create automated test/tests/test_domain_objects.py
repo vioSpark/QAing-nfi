@@ -43,6 +43,14 @@ def test_tolerance_expands_boundary():
     assert not rect(0.01).is_inside(Point(160.02, 0))
 
 
+def test_distance_outside():
+    assert rect().distance_outside(Point(0, 0)) == 0
+    assert rect().distance_outside(Point(160, 150)) == 0          # corner
+    assert rect().distance_outside(Point(170, 0)) == 10
+    assert rect().distance_outside(Point(163, 154)) == 5          # past a corner: 3-4-5
+    assert rect(0.5).distance_outside(Point(170.5, 0)) == 10      # tolerance included
+
+
 def test_parse_point_variants():
     assert parse_point("(160.00, -150.00)") == Point(160, -150)
     assert parse_point("(-3, -149)") == Point(-3, -149)
