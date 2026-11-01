@@ -34,16 +34,18 @@ jobs:
       run: python -m coverage run -m pytest "Create automated test"
 
     # Also when tests fail: their coverage is still worth a look.
-    - name: Write coverage.xml (Cobertura)
+    - name: Write coverage-merge.xml (Cobertura)
       if: ${{ success() || steps.tests.outcome == 'failure' }}
-      run: python -m coverage xml -o coverage.xml
+      run: python -m coverage xml -o coverage-merge.xml
 
-    - name: Upload coverage.xml
+    # Unzipped, so download-artifact doesn't unzip it: its unzip code still uses the deprecated Buffer()
+    # (actions/download-artifact#484). An unzipped artifact is named after its file.
+    - name: Upload coverage-merge.xml
       if: ${{ success() || steps.tests.outcome == 'failure' }}
       uses: actions/upload-artifact@v7
       with:
-        name: coverage-merge
-        path: coverage.xml
+        path: coverage-merge.xml
+        archive: false
         if-no-files-found: error
         retention-days: 7
 
@@ -54,18 +56,18 @@ jobs:
       shell: bash
       run: |
         dotnet tool install dotnet-reportgenerator-globaltool --version 5.5.11 --tool-path "$RUNNER_TEMP/reportgenerator"
-        "$RUNNER_TEMP/reportgenerator/reportgenerator" "-reports:coverage.xml" "-sourcedirs:$GITHUB_WORKSPACE" \
-          "-targetdir:coverage-report" "-reporttypes:Html" \
+        "$RUNNER_TEMP/reportgenerator/reportgenerator" "-reports:coverage-merge.xml" "-sourcedirs:$GITHUB_WORKSPACE" \
+          "-targetdir:coverage-report-merge" "-reporttypes:Html" \
           "-title:QAing-nfi: branch_head merged into main_head ($(git rev-parse --short HEAD))" | tee "$RUNNER_TEMP/reportgenerator.log"
         ! grep "does not exist" "$RUNNER_TEMP/reportgenerator.log"
 
-    # Not named coverage-*: enforce-policy downloads those. The per-file pages are named ._py*.html.
-    - name: Upload the coverage report
+    # The per-file pages are named ._py*.html.
+    - name: Upload coverage-report-merge
       if: ${{ success() || steps.tests.outcome == 'failure' }}
       uses: actions/upload-artifact@v7
       with:
-        name: line-by-line-coverage-report
-        path: coverage-report/
+        name: coverage-report-merge
+        path: coverage-report-merge/
         include-hidden-files: true
         if-no-files-found: error
         retention-days: 7
@@ -110,14 +112,34 @@ jobs:
       if: ${{ steps.tests.outcome == 'failure' }}
       run: echo "::warning::Tests fail on main_head ($(git rev-parse --short HEAD)); its coverage is still used."
 
-    - name: Write coverage.xml (Cobertura)
-      run: python -m coverage xml -o coverage.xml
+    - name: Write coverage-main_head.xml (Cobertura)
+      run: python -m coverage xml -o coverage-main_head.xml
 
-    - name: Upload coverage.xml
+    # Unzipped, as in coverage-merge.
+    - name: Upload coverage-main_head.xml
       uses: actions/upload-artifact@v7
       with:
-        name: coverage-main_head
-        path: coverage.xml
+        path: coverage-main_head.xml
+        archive: false
+        if-no-files-found: error
+        retention-days: 7
+
+    # As in coverage-merge; the sources are main_head's.
+    - name: Line-by-line coverage report (ReportGenerator)
+      shell: bash
+      run: |
+        dotnet tool install dotnet-reportgenerator-globaltool --version 5.5.11 --tool-path "$RUNNER_TEMP/reportgenerator"
+        "$RUNNER_TEMP/reportgenerator/reportgenerator" "-reports:coverage-main_head.xml" "-sourcedirs:$GITHUB_WORKSPACE" \
+          "-targetdir:coverage-report-main_head" "-reporttypes:Html" \
+          "-title:QAing-nfi: main_head ($(git rev-parse --short HEAD))" | tee "$RUNNER_TEMP/reportgenerator.log"
+        ! grep "does not exist" "$RUNNER_TEMP/reportgenerator.log"
+
+    - name: Upload coverage-report-main_head
+      uses: actions/upload-artifact@v7
+      with:
+        name: coverage-report-main_head
+        path: coverage-report-main_head/
+        include-hidden-files: true
         if-no-files-found: error
         retention-days: 7
 
@@ -133,11 +155,12 @@ jobs:
       with:
         python-version: '3.x'
 
-    # Each artifact lands in a folder named after it: coverage-main_head/, coverage-merge/.
+    # With merge-multiple the two files land in the workspace itself, not in a folder per artifact.
     - name: Download both coverage files
       uses: actions/download-artifact@v8
       with:
-        pattern: coverage-*
+        pattern: coverage-*.xml
+        merge-multiple: true
 
     - name: Coverage protection policy
-      run: python tools/coverage_protection_policy.py coverage-main_head/coverage.xml coverage-merge/coverage.xml
+      run: python tools/coverage_protection_policy.py coverage-main_head.xml coverage-merge.xml

@@ -23,16 +23,15 @@ def main(arguments: list[str]) -> int:
     merge_coverage = line_coverage(merge_cobertura)
     print(f"{'main_head:':<35}{main_coverage:.2f}% line coverage")
     print(f"{'branch_head merged into main_head:':<35}{merge_coverage:.2f}% line coverage")
-    print(f"{'saturation level:':<35}{SATURATION_LEVEL:.2f}% line coverage")
     # Line coverage may not decrease: equal passes.
     if main_coverage <= merge_coverage:
         print("Coverage protection policy: passed")
         return 0
     # Saturated: the merge may lower line coverage as long as it stays at or above the saturation level.
     if merge_coverage >= SATURATION_LEVEL:
-        print("Coverage protection policy: passed, line coverage went down but stays saturated")
+        print(f"Coverage protection policy: passed (due to being at or above the {SATURATION_LEVEL:g}% saturation level)")
         return 0
-    print("Coverage protection policy: REJECTED, line coverage went down below the saturation level")
+    print("Coverage protection policy: REJECTED (line coverage went down)")
     return 1
 
 
